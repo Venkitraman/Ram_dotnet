@@ -11,7 +11,7 @@ export default class ActivityStore {
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false;
-    loadingInitial = true;
+    loadingInitial = false;
 
     constructor() {
         makeAutoObservable(this) //This Autoobser will automatically observe the property title .
@@ -29,13 +29,13 @@ export default class ActivityStore {
         //till this vill get all the values(activities)
     }
 
+    //To get the whole activity  
     loadActivities = async () => {
+        this.setLoadingInitial(true);
         try {
             const activities = await agent.Activities.list(); //getting the list of activities
                 activities.forEach(activity => { //looping through it and splitting it 
-                    activity.date = activity.date.split('T')[0];
-                    //this.activities.push(activity); //pushing the splitted activity to the activities Array .
-                    this.activityRegistry.set(activity.id,activity);
+                    this.setActivity(activity);
                 })
                 this.setLoadingInitial(false);
 
@@ -44,6 +44,37 @@ export default class ActivityStore {
             this.setLoadingInitial(false);
         }
     }
+
+    //To get the activity based on Id 
+    loadActivity = async (id:string) => {
+        let activity = this.getActivity(id);
+        if(activity){
+            this.selectedActivity = activity;
+            return activity;
+        } 
+        else{
+            this.setLoadingInitial(true);
+            try {
+                activity = await agent.Activities.details(id);
+                this.setActivity(activity);
+                runInAction(() => this.selectedActivity = activity);
+                this.setLoadingInitial(false);
+                return activity;
+            } catch (error) {
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    private setActivity = (activity: Activity)=>{
+        activity.date = activity.date.split('T')[0];
+        //this.activities.push(activity); //pushing the splitted activity to the activities Array .
+        this.activityRegistry.set(activity.id,activity);
+    }
+
+     private getActivity = (id:string)=>{
+        return this.activityRegistry.get(id);
+     }
 
     // setTitle(){
     //     this.title = this.title+'!';
@@ -56,23 +87,23 @@ export default class ActivityStore {
         this.loadingInitial = state;
     }
 
-    selectActivity = (id: string) => {
-        //this.selectedActivity = this.activities.find(a=> a.id === id);
-        this.selectedActivity = this.activityRegistry.get(id);//return the activity that matches the particular id
-    }
+    // selectActivity = (id: string) => {
+    //     //this.selectedActivity = this.activities.find(a=> a.id === id);
+    //     this.selectedActivity = this.activityRegistry.get(id);//return the activity that matches the particular id
+    // }
 
-    cancelSelectedActivity = () => {
-        this.selectedActivity= undefined ;
-    }
+    // cancelSelectedActivity = () => {
+    //     this.selectedActivity= undefined ;
+    // }
 
-    openForm = (id?: string) => {
-        id ? this.selectActivity(id) : this.cancelSelectedActivity();
-        this.editMode = true;
-    }
+    // openForm = (id?: string) => {
+    //     id ? this.selectActivity(id) : this.cancelSelectedActivity();
+    //     this.editMode = true;
+    // }
 
-    closeForm = () => {
-        this.editMode = false;
-    }
+    // closeForm = () => {
+    //     this.editMode = false;
+    // }
 
     createActivity = async(activity : Activity) => {
         this.loading = true;
@@ -121,10 +152,10 @@ export default class ActivityStore {
             runInAction(()=>{
                 //this.activities= [...this.activities.filter(a=>a.id != id)];
                 this.activityRegistry.delete(id); //because we have advantage of using Map<key,value>
-                if(this.selectedActivity ?.id === id) this.cancelSelectedActivity();
                 this.loading=false;
             })
         } catch (error) {
+            console.log(error);
             runInAction(()=>{
                 this.loading=false;
             })

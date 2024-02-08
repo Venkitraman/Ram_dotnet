@@ -1,30 +1,26 @@
-import { useEffect } from 'react';
 import { Container } from 'semantic-ui-react';
 import NavBar from './NavBar';
-import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
-
-import LoadingComponent from './LoadingComponent';
-import { useStore } from '../stores/store';
 import { observer } from 'mobx-react-lite';
+import { Outlet, useLocation } from 'react-router-dom';
+import HomePage from '../../features/activities/home/HomePage';
 
 function App() {
-  const {activityStore} = useStore(); //The useStore returns StoreContext ,Our Store Context contains an object with ActivityStore inside;
-
-
-  useEffect(() => {
-    activityStore.loadActivities();
-  }, [activityStore])
-
-  //The three dots is to loop over the activities
-  
-  if(activityStore.loadingInitial) return <LoadingComponent content='Loading app' />
+  const location = useLocation(); //This will get the location or pathname 
 
   return (
     <>
-      <NavBar />
-      <Container style={{ marginTop: '7em' }}>
-        <ActivityDashboard />
-      </Container>
+    {/* This checks if the location.path = / than it will display home page not the navbar and other else displays all */}
+      {location.pathname === '/' ? <HomePage /> :
+        <>
+          <NavBar />
+          <Container style={{ marginTop: '7em' }}>
+            {/* <ActivityDashboard /> */}
+            <Outlet />
+            {/* When we load outlet these get swapped with the actual component that we need there */}
+            {/* eg: When we go to activities the outlet loads the ActivityDashboard */}
+          </Container>
+        </>
+      }
     </>
   )
 }
