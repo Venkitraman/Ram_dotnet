@@ -5,7 +5,7 @@ namespace Application.Activities
 {
     public class Delete
     {
-        public class Command : IRequest
+        public class Command : IRequest //IRequest http request 
         {
             public Guid Id { get; set; }
         }

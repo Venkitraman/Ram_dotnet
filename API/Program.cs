@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
-var app = builder.Build();
+var app = builder.Build(); //connection string check
 
 // Configure the HTTP request pipeline. To ADD MIDDLEWARE
 if (app.Environment.IsDevelopment())
@@ -17,7 +17,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("CorsPolicy");
+app.UseCors("CorsPolicy"); //Specifies the requests and ports 
 
 app.UseAuthorization();
 

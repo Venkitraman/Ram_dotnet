@@ -1,3 +1,4 @@
+//MODEL 
 namespace Domain
 {
     public class Activity

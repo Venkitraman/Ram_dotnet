@@ -13,8 +13,9 @@ namespace API.Controllers
             return await Mediator.Send(new List.Query());
         }
 
+        //In CQRS patern the mediatr will consider the get methods as Query and the Post,edit and delete as Command
         [HttpGet("{id}")]  //api/activities/fdefjtrhefhdlk8
-
+        //[Route("GetActive")]
         public async Task<ActionResult<Activity>> GetActivity(Guid id)
         {
             //return await _context.Activities.FindAsync(id);

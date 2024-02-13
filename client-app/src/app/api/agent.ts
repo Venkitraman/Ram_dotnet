@@ -19,8 +19,12 @@ axios.interceptors.response.use(async response => {
     }
 })
 
-const responseBody = <T> (response: AxiosResponse<T>) => response.data; 
+// <T> is a generic type parameter that allows these functions to work with any type of data
 
+const responseBody = <T> (response: AxiosResponse<T>) => response.data; //Define a utility function responseBody that extracts the data from AxiosResponse.
+
+//Define an object requests which contains functions for making different types of HTTP requests (GET, POST, PUT, DELETE).
+// Each function uses Axios to make the request and extracts the data from the response using the responseBody function.
 const requests = {
     get: <T> (url: string) => axios.get<T>(url).then(responseBody),
     post: <T> (url: string, body: {}) => axios.post<T>(url,body).then(responseBody),
@@ -28,6 +32,8 @@ const requests = {
     del: <T> (url: string) => axios.delete<T>(url).then(responseBody),
 }
 
+//instead of creating separate objects for end point url,defining methods inside one object and reusing it.
+// 
 //Create an object that stores our request
 const Activities ={
     list:() => requests.get<Activity[]>('/activities'),

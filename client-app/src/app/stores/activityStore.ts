@@ -25,8 +25,20 @@ export default class ActivityStore {
 
     //Computed Property to sort the activities by date
     get activitiesByDate(){
-        return Array.from(this.activityRegistry.values()).sort((a,b)=> Date.parse(a.date) - Date.parse(b.date));
-        //till this vill get all the values(activities)
+        return Array.from(this.activityRegistry.values()).sort((a,b)=> 
+            Date.parse(a.date) - Date.parse(b.date));
+        //till this will get all the values(activities)
+    }
+
+    get groupedActivities(){
+        return Object.entries(
+            this.activitiesByDate.reduce((activities, activity) => {
+                const date = activity.date;
+                //This line checks if there's already an array of activities for the current date in the activities object. If there is, it appends the current activity to that array using the spread operator .... If not, it creates a new array containing only the current activity.
+                activities[date] = activities[date] ? [...activities[date],activity] : [activity];
+                return activities;
+            },{} as {[key: string]: Activity[]}) //So in each date(key) contains array of activity .
+        )
     }
 
     //To get the whole activity  
