@@ -3,6 +3,7 @@ import NavBar from './NavBar';
 import { observer } from 'mobx-react-lite';
 import { Outlet, useLocation } from 'react-router-dom';
 import HomePage from '../../features/activities/home/HomePage';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const location = useLocation(); //This will get the location or pathname 
@@ -12,6 +13,7 @@ function App() {
     {/* This checks if the location.path = / than it will display home page not the navbar and other else displays all */}
       {location.pathname === '/' ? <HomePage /> :
         <>
+        <ToastContainer position='bottom-right' hideProgressBar theme='colored'/>
           <NavBar />
           <Container style={{ marginTop: '7em' }}>
             {/* <ActivityDashboard /> */}
